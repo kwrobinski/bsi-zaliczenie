@@ -4,374 +4,51 @@
     <meta charset="UTF-8">
     <title>Działanie algorytmu RSA</title>
 
-    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.css" />
-    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
     <link rel="stylesheet" href="css/app.css" />
     <link rel="stylesheet" href="css/bootstrap.min.css" />
-
-    <script src="https://unpkg.com/swiper/swiper-bundle.js"></script>
-    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
     <script src="js/bootstrap.bundle.min.js"></script>
+    <style>
+        ol {
+            counter-reset: item
+        }
+        li {
+            display: block;
+            margin: 5px 0px;
+        }
+        li:before {
+            content: counters(item, ".") ". ";
+            counter-increment: item
+        }
+    </style>
 </head>
 <body>
-    <!-- Swiper -->
-    <div class="swiper-container">
-        <div class="swiper-wrapper">
-            <div class="swiper-slide">
-                <div class="container swiper-no-swiping">
-                    <h1 class="mb-4">1. Czym jest algorytm RSA?</h1>
-                    <hr>
-                    <p class="lead">
-                        Algorytm RSA jest jednym z pierwszych i obecnie <b>najpopularniejszych asymetrycznych algorytmów kryptograficznych z kluczem publicznym</b>.
-                        Został zaprojektowany w 1977 roku przez <b>Rona Rivesta, Adiego Shamira oraz Leonarda Adlemana</b> i od nazwisk jego twórców zawdzięcza swoją nazwę
-                        (<b>R</b>ivest&nbsp;-&nbsp;<b>S</b>hamir&nbsp;-&nbsp;<b>A</b>dleman).
-                    </p>
-                    <div class="row my-4">
-                        <div class="col-md-2 offset-md-3">
-                            <img src="img/rivest.jpg" class="img-fluid img-thumbnail img-creator mb-1"/>
-                            <p class="text-center text-muted">Ron Rivest</p>
-                        </div>
-                        <div class="col-md-2">
-                            <img src="img/szamir.jpg" class="img-fluid img-thumbnail img-creator mb-1"/>
-                            <p class="text-center text-muted">Adi Shamir</p>
-                        </div>
-                        <div class="col-md-2">
-                            <img src="img/adleman.jpg" class="img-fluid img-thumbnail img-creator mb-1"/>
-                            <p class="text-center text-muted">Leonard Adleman</p>
-                        </div>
-                    </div>
-                    <p class="lead">
-                        Jego zasadniczą cechą są dwa klucze. <b>Klucz publiczny</b> umożliwia tylko do zaszyfrowanie danych, więc nie musi być chroniony.
-                        Drugi klucz (<b>prywatny</b>) służy do odczytywania informacji zaszyfrowanych za pomocą klucza publicznego. Klucz prywatny <b>nie może być udostępniony publicznie</b>.
-                    </p>
-                    <p class="lead">
-                        Działanie RSA oparte jest na <b>trudności faktoryzacji dużych liczb złożonych</b> (o czym będzie później).
-                    </p>
-                </div>
-            </div>
-
-            <div class="swiper-slide">
-                <div class="container swiper-no-swiping">
-                    <h1 class="mb-4">2. Bezpieczeństwo i przykładowe zastosowania algorytmu RSA</h1>
-                    <hr>
-                    <p class="lead">
-                        Na dzień dzisiejszy rekomendowany algorytm <b>RSA z kluczem 2048 bitowym</b> jest nie do złamania (teoretycznie).
-                        Uznajemy, że nie można go złamać, ponieważ <b>klasycznym komputerom złamanie takiego klucza zajęłoby biliony lat</b>. Dlatego wszyscy czujemy, że jesteśmy
-                        bezpieczni.
-                    </p>
-                    <p class="lead">
-                        Przełomem w tej dziedzinie może być <b>stworzenie perfekcyjnego komputera kwantowego</b> z 4099 idealnie stabilnymi kubitami. Taki komputer
-                        używając algorytmu faktoryzacji Shora byłby w stanie <b>złamać RSA-2048 w 10 sekund</b>. Jednak nie dysponujemy komputerem o takiej liczbie kubitów,
-                        ani nie posiadamy ich odpowiedniej stabilności.
-                    </p>
-                    <p class="lead">
-                        Oczywiście całe bezpieczeństwo RSA opiera się na <b>ochronie klucza prywatnego</b>. Nawet jeżeli złamanie takiego klucza zajmie bardzo dużo czasu, to przestępcy
-                        mogą próbować go uzyskać <b>stosując socjotechniki</b> lub <b>wykradając klucz prywatny z serwera</b>.
-                    </p>
-                    <p class="lead">
-                        Na rok 2020 największym złamanym kluczem RSA jest <b>RSA-250 z 829 bitowym kluczem</b>.
-                    </p>
-
-                    <p class="lead">Przykładowe zastosowania RSA: </p>
-                    <ul class="ml-5 mb-5 lead">
-                        <li><b>Szyfrowanie SSL</b> - używane na stronach internetowych</li>
-                        <li><b>Szyfrowanie połączenia SSH</b> - bezpieczne łączenie się z serwerem</li>
-                        <li><b>Podpisy cyfrowe</b></li>
-                        <li><b>PGP</b> - narzędzie służące do szyfrowania, odszyfrowywania i uwierzytelniania między innymi poczty elektronicznej, plików, katalogów oraz partycji dyskowych</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="swiper-slide">
-                <div class="container swiper-no-swiping">
-                    <h1 class="mb-4">3. Działanie algorytmu RSA</h1>
-                    <hr>
-                    <p class="lead">
-                        Działanie algorytmu RSA opiera się na trzech podstawowych założeniach:
-                    </p>
-                    <ul class="ml-5 mb-5 lead">
-                        <li class="my-3">
-                            Generowanie klucza publicznego i prywatnego. Klucz publiczny jest udostępniany i umożliwia zaszyfrowanie danych. Klucz prywatny umożliwia rozszyfrowanie danych zakodowanych
-                            kluczem publicznym. Musi on być przechowywany w niedostępnym publicznie miejscu.
-                        </li>
-                        <li class="my-3">
-                            Użytkownik po otrzymaniu klucza publicznego koduje za jego pomocą swoje dane i przesyła je w postaci szyfru do odbiorcy dysponującego kluczem prywatnym.
-                            Klucz publiczny nie musi być chroniony, ponieważ nie pozwala on na rozszyfrowanie wiadomości, proces szyfrowania nie jest odwracalny.
-                        </li>
-                        <li class="my-3">
-                            Odbiorca po otrzymaniu wiadomości rozszyfrowuje ją przy pomocy klucza prywatnego.
-                        </li>
-                    </ul>
-                    <div class="row mt-5">
-                        <div class="col-md-12 text-center">
-                            <img src="img/algorithm-scheme.svg" class="img-fluid img-thumbnail mb-3 p-4" />
-                            <p class="text-center text-muted">Schemat działania algorytmu RSA (<a href="https://www.educative.io/edpresso/what-is-the-rsa-algorithm" target="_blank">Żródło</a>)</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="swiper-slide">
-                <div class="container swiper-no-swiping" style="overflow-y: auto; max-height: 85vh">
-                    <h1 class="mb-4">3.1. Generowanie pary kluczy publicznych i prywatnych</h1>
-                    <hr>
-
-                    <div class="row mb-4">
-                        <div class="col-md-12">
-                            <h4 class="mb-4">Krok 1 - generowanie liczb pierwszych</h4>
-                            <p class="lead">Pierwszym krokiem, który musimy wykonać, jest znalezienie dwóch dużych liczb pierwszych (w RSA-2048 są używane dwie liczby 1024 bitowe). Oznaczamy je jako <b><i>p</i></b> oraz <b><i>q</i></b>.</p>
-                            <p class="lead">Istnieją specjalne algorytmy generujące duże liczby pierwsze np. Test pierwszości Fermata lub Test Milera-Rabina.</p>
-                            <p class="lead">
-                                Dla celów przedstawienia działania algorytmu użyjemy dwóch małych liczb pierwszych. Proszę pamiętać, że przy właściwej implementacji
-                                szyfrowania RSA należy wygenerować dwie duże liczby pierwsze.
-                            </p>
-
-                            <div class="row">
-                                <div class="col-md-12 text-center">
-                                    <h3><var>p</var> = 11</h3>
-                                    <h3><var>q</var> = 23</h3>
-                                    <h3 class="my-4"><span class="fw-light">Obliczamy</span> <var>n</var> = <var>p</var> * <var>q</var> = 253</h3>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row mb-4">
-                        <div class="col-md-12">
-                            <h4 class="mb-4">Krok 2 - obliczanie wartości funkcji Eulera</h4>
-                            <p class="lead">Wartością funckji Eulera jest liczba elementów względnie pierwszych z <var>n</var>. Liczby względnie pierwsze to liczby całkowite, których największym wspólnym dzielnikiem jest 1.</p>
-
-                            <div class="row">
-                                <div class="col-md-12 text-center">
-                                    <h3 class="my-4">φ(<var>n</var>) = (<var>p</var> - 1) * (<var>q</var> - 1) = 220</h3>
-                                    <div class="alert alert-danger"><b>Uwaga!</b> Po obliczeniu <var>n</var> oraz wartości funkcji Eulera należy usunąć liczby <var>p</var> oraz <var>q</var> tak, aby nie pozostał po nich żaden ślad.</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row mb-4">
-                        <div class="col-md-12">
-                            <h4 class="mb-4">Krok 3 - wybranie liczby <var>e</var> (wykładnik publiczny)</h4>
-                            <p class="lead">Następnym krokiem jest wybranie losowo liczby <var>e</var>, która będzie względnie pierwsza z φ(<var>n</var>) = 220.</p>
-
-                            <div class="row">
-                                <div class="col-md-12 text-center">
-                                    <h3 class="my-4"><var>e</var>(1 < <var>e</var> < φ(<var>n</var>)) = 29</h3>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row mb-4">
-                        <div class="col-md-12">
-                            <h4 class="mb-4">Krok 4 - znalezienie liczby <var>d</var> (wykładnik prywatny)</h4>
-                            <p class="lead">Za pomocą rozszerzonego algorytmu Euklidesa wyznaczamy wykładnik prywatny, który ma być odwrotnością modulo <var>e</var>.
-                                W naszym przypadku liczbą spełniającą ten warunek jest 129.
-                            </p>
-
-                            <div class="row">
-                                <div class="col-md-12 text-center">
-                                    <h3 class="my-4"><var>d</var> × 29 mod 220 = 1</h3>
-                                    <h3 class="my-4"><var>d</var> = 129</h3>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row mb-4">
-                        <div class="col-md-12">
-                            <h4 class="mb-4">Krok 5 - gotowe klucze</h4>
-                            <p class="lead">
-                                Wykonanie wszystkich powyższych kroków pozwala nam na utworzenie kluczy.
-                            </p>
-
-                            <div class="row">
-                                <div class="col-md-12 text-center">
-                                    <h3 class="my-4"><span class="fw-light">Klucz publiczny:</span> (<var>e</var>, <var>n</var>) &rarr; (29, 253)</h3>
-                                    <h3 class="my-4"><span class="fw-light">Klucz prywatny:</span> (<var>d</var>, <var>n</var>) &rarr; (129, 253)</h3>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="swiper-slide">
-                <div class="container swiper-no-swiping" style="overflow-y: auto; max-height: 85vh">
-                    <h1 class="mb-4">3.2. Szyfrowanie i deszyfrowanie wiadomości</h1>
-                    <hr>
-
-                    <div class="row mb-4">
-                        <div class="col-md-12">
-                            <p class="lead"><b>Kluczem publicznym</b>, który uzyskaliśmy w poprzednim kroku możemy teraz zaszyfrować dowolną <b>liczbę mniejszą niż <var>n</var> = 253.</b> Przyjmijmy, że posiadamy poniższe dane:</p>
-
-                            <div class="row">
-                                <div class="col-md-12 text-center">
-                                    <h3><span class="fw-light">Tekst jawny:</span> <var>m</var> = 56</h3>
-                                    <h3><span class="fw-light">Klucz publiczny:</span> (29, 253)</h3>
-                                    <h3><span class="fw-light">Klucz prywatny:</span> (129, 253)</h3>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row mb-4">
-                        <div class="col-md-12">
-                            <p class="lead">Aby <b>zaszyfrować</b> tekst jawny <var>m</var> musimy wykonać poniższe działanie:</p>
-
-                            <div class="row">
-                                <div class="col-md-12 text-center">
-                                    <h3><var>c</var> = m<sup>pu1</sup> mod pu2</h3>
-                                    <span class="fw-light text-muted">pu1 = pierwsza liczba z klucza publicznego, pu2 = druga liczba z klucza publicznego</span>
-                                    <h3 class="mt-3"><span class="fw-light">Szyfrogram: </span> <var>c</var> = 56<sup>29</sup> mod 253</h3>
-                                    <h3><var>c</var> = 221</h3>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row mb-4">
-                        <div class="col-md-12">
-                            <p class="lead">
-                                Niestety liczby w przykładzie są na tyle duże, że <b>żaden kalkulator sobie z nimi nie poradzi</b>. W takim wypadku możemy zastosować
-                                <b>algorytm szybkiego potęgowania modulo</b> (implementacja w języku JavaScript jest dostępna w ostatniej części).
-                            </p>
-
-                            <div class="row">
-                                <div class="col-md-12 text-center">
-                                    <h3><var>c</var> = m<sup>pu1</sup> mod pu2</h3>
-                                    <span class="fw-light text-muted">pu1 = pierwsza liczba z klucza publicznego, pu2 = druga liczba z klucza publicznego</span>
-                                    <h3 class="mt-3"><span class="fw-light">Szyfrogram: </span> <var>c</var> = 56<sup>29</sup> mod 253</h3>
-                                    <h3><var>c</var> = 221</h3>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row mb-4">
-                        <div class="col-md-12">
-                            <p class="lead">Otrzymany szyfrogram <var>c</var> możemy przesłać do odbiorcy. Odbiorca może go <b>rozszyfrować kluczem prywatnym</b>, który należy przesłać innym kanałem niż szyfrogram.</p>
-
-                            <div class="row">
-                                <div class="col-md-12 text-center">
-                                    <h3><var>m</var> = c<sup>pr1</sup> mod pr2</h3>
-                                    <span class="fw-light text-muted">pr1 = pierwsza liczba z klucza prywatnego, pr2 = druga liczba z klucza prywatnego</span>
-                                    <h3 class="mt-3"><span class="fw-light">Tekst jawny: </span> <var>m</var> = 221<sup>129</sup> mod 253</h3>
-                                    <h3><var>m</var> = 56</h3>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="swiper-slide">
-                <div class="container swiper-no-swiping">
-                    <h1 class="mb-4">4. Zaszyfruj lub rozszyfruj własną wiadomość</h1>
-                    <hr>
-                    <h4 class="mb-4">1. Wybierz liczby <var>p</var> i <var>q</var></h4>
-                    <div class="row">
-                        <div class="col-md-2">
-                            <label>Liczba p</label>
-                            <input type="number" class="form-control" id="liczba-p" readonly disabled>
-                        </div>
-                        <div class="col-md-2">
-                            <label>Liczba q</label>
-                            <input type="number" class="form-control" id="liczba-q" readonly disabled>
-                        </div>
-                        <div class="col-md-3">
-                            <br><button class="btn btn-primary col-12" id="generuj-liczby">Wylosuj p, q i wygeneruj klucze</button>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <h4 class="my-4">2. Wygenerowane klucze</h4>
-                        <div class="row">
-                            <div class="col-md-2">
-                                <label for="wartosc-n">Wartość n</label>
-                                <input class="form-control" type="number" id="wartosc-n" readonly disabled>
-                            </div>
-
-                            <div class="col-md-2">
-                                <label for="wartosc-euler">Wartość funkcji Eulera</label>
-                                <input class="form-control" type="number" id="wartosc-euler" readonly disabled>
-                            </div>
-
-                            <div class="col-md-2">
-                                <label for="wartosc-e">Wartość e</label>
-                                <input class="form-control" type="number" id="wartosc-e" readonly disabled>
-                            </div>
-
-                            <div class="col-md-2">
-                                <label for="wartosc-d">Wartość d</label>
-                                <input class="form-control" type="number" id="wartosc-d" readonly disabled>
-                            </div>
-                        </div>
-                    </div>
-
-                    <form id="rsa-form" action="javascript:zaszyfrujLubOdszyfruj();">
-                        <div class="row mt-2">
-                            <div class="col-md-2">
-                                <label for="klucz-publiczny">Klucz publiczny</label>
-                                <input class="form-control" type="text" id="klucz-publiczny" pattern="^[0-9]*(,){1}[0-9]*" title="Wartość klucza musi być w formacie x,y!" required>
-                            </div>
-                            <div class="col-md-2">
-                                <label for="klucz-prywatny">Klucz prywatny</label>
-                                <input class="form-control" type="text" id="klucz-prywatny" pattern="^[0-9]*(,){1}[0-9]*" title="Wartość klucza musi być w formacie x,y!" required>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <h4 class="my-4">3. Wpisz tekst jawny lub szyfrogram</h4>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-2">
-                                <label for="tekst-jawny">Tekst jawny</label>
-                                <input class="form-control" type="number" id="tekst-jawny">
-                            </div>
-
-                            <div class="col-md-2">
-                                <label for="szyfrogram">Szyfrogram</label>
-                                <input class="form-control" type="number" id="szyfrogram">
-                            </div>
-
-                            <div class="col-md-2">
-                                <br><button class="btn btn-warning col-12">Zaszyfruj / Rozszyfruj</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+    <div class="container h-100 d-flex justify-content-center align-items-center">
+        <div class="row w-100">
+            <div class="col-md-12">
+                <h1 class="display-4">Zobrazowanie działania algorytmu RSA</h1>
+                <p class="lead">Projekt wykonany na zaliczenie przedmiotu Bezpieczeństwo Systemów Informatycznych. <br> Autorzy: Kacper Wróbiński, Patryk Kaczmarek</p>
+                <hr class="my-4">
+                <p class="lead">
+                    Prezentacja jest podzielona na część teoretyczną i interaktywną. Nawigować pomiędzy slajdami można strzałkami.
+                </p>
+                <h4>Spis treści:</h4>
+                <ol class="mt-4 px-2 lead">
+                    <li>Czym jest algorytm RSA?</li>
+                    <li>Bezpieczeństwo i przykładowe zastosowania algorytmu RSA</li>
+                    <li>Działanie algorytmu RSA
+                        <ol>
+                            <li>Generowanie pary kluczy publicznych i prywatnych</li>
+                            <li>Szyfrowanie i deszyfrowanie wiadomości</li>
+                        </ol>
+                    </li>
+                    <li>Zaszyfruj lub rozszyfruj swoją wiadomość</li>
+                    <li>Przykładowe implementacje w JavaScript</li>
+                </ol>
+                <hr class="my-4">
+                <a class="btn btn-success float-end" href="app.html" role="button">Zaczynajmy</a>
+                <img src="img/cdv-logo.png" class="float-start w-25">
             </div>
         </div>
-
-        <!-- Add Pagination -->
-        <div class="swiper-pagination"></div>
-        <!-- Add Arrows -->
-        <div class="swiper-button-next"></div>
-        <div class="swiper-button-prev"></div>
     </div>
-
-    <script src="js/app.js"></script>
-    <script>
-        var swiper = new Swiper('.swiper-container', {
-            slidesPerView: 1,
-            spaceBetween: 50,
-            keyboard: {
-                enabled: true,
-            },
-            pagination: {
-                el: '.swiper-pagination',
-                type: 'progressbar'
-            },
-            navigation: {
-                nextEl: '.swiper-button-next',
-                prevEl: '.swiper-button-prev',
-            },
-        });
-
-        generujPQ();
-    </script>
 </body>
 </html>

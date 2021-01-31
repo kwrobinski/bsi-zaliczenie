@@ -93,10 +93,22 @@ function generujKlucze() {
     let e = losujE(euler);
     let d = odwrotnoscModulo(e, euler);
     ustawWartosciWygenerowanychKluczy(e, d, n);
+
+    // Wartość n
     nInput.value = n;
+    document.querySelector('#wartosc-n-wzor').innerHTML = `<var>n</var> = <var>p</var> * <var>q</var> = ${p} * ${q}`;
+
+    // Wartość funkcji Eulera
     eulerInput.value = euler;
+    document.querySelector('#wartosc-euler-wzor').innerHTML = `<var>φ</var>(<var>n</var>) = (<var>p</var>-1) * (<var>q</var>-1) = ${p - 1} * ${q - 1}`;
+
+    // Wartość e (wykładnika publicznego)
     eInput.value = e;
+    document.querySelector('#wartosc-e-wzor').innerHTML = `1 < <var>e</var> < <var>φ</var>(<var>n</var>)<br> Losowa, względnie pierwsza z <var>φ</var>(<var>n</var>)`;
+
+    // Wartość d (wykładnik prywatny)
     dInput.value = d;
+    document.querySelector('#wartosc-d-wzor').innerHTML = `<var>d</var> * <var>e</var> mod <var>φ</var>(<var>n</var>) (odwr. modulo <var>e</var>)<br>  d * ${e} mod ${euler}`;
 }
 
 function parsujKlucze() {
@@ -117,5 +129,3 @@ function zaszyfrujLubOdszyfruj() {
 }
 
 generujPqBtn.addEventListener("click", generujPQ);
-kluczPublicznyInput.addEventListener("input", sprawdzCzyZmienionoKlucze);
-kluczPrywatnyInput.addEventListener("input", sprawdzCzyZmienionoKlucze);
